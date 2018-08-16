@@ -8,16 +8,26 @@ int main()
   std::transform(
       particles.begin(), particles.end(), particles.begin(),
       [p] {
-        setRandom(p);  // set random values for location and use these values
-                       // for color, velocity, and mass
+        setRandom(p);    // set random values for location and use these values
+                         // for color, velocity, and mass
         setCircular(p);  // set velocity perpendicular to the location vector
-      })
+      }) ForceMatrix
+  fm_gravity(ParticleSystem particles,
+             std::function < Force(Particle, Particle)
+                                 ff);  // creates a force matrix so that forces
+                                       // between the two same particles do not
+                                       // need to be computed twice (lazy
+                                       // evaluation and Matrix is only half
+                                       // full)
 
-      // calculate forces (per frame)
-      std::transform(particles.begin(), particles.end(), particles.begin(),
-                     [p, particles] {
+  // calculate forces (per frame)
+  //
+  fm_gravity.reset();
 
-    p << accumulate(for_all(particles, gravity)) //gravitational forces between particles
+  std::transform(particles.begin(), particles.end(), particles.begin(),
+                 [p, particles] {
+
+    p << accumulate(p, fm_gravity) //gravitational forces between particles
 
       << accumulate(for_all(calc_force(particles, [p, other]{ //some other force defined by lamda (in this case, spring force)
       float constant = 1;
@@ -34,7 +44,7 @@ int main()
       return glm::normalize(o.location - p.location) * 0.1f;  //* strength
           };
 
-                     });
+                 });
 
   return 0;
 }

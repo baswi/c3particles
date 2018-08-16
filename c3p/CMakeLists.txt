@@ -6,6 +6,7 @@ find_package(OpenGL REQUIRED)
 find_package(PkgConfig REQUIRED)
 PKG_CHECK_MODULES(GTK REQUIRED gtk+-3.0)
 
+#include thread libraries
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
@@ -39,9 +40,15 @@ add_executable(
     src/main.cc
     src/particle_system.cc
     src/particle_renderer.cc
+    src/particle_functions.cc
+    src/newtonian_objects.cc
+    src/force_matrix.cc
+    #    src/control_window.c
     #    src/particle_container.cc
     src/common/shader.cc
 )
+
+set_property(TARGET main PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(main
   ${GTK_LIBRARIES}
